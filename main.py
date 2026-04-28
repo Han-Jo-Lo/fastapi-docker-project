@@ -9,12 +9,17 @@ from fastapi import FastAPI
 from celery_app import app_celery
 from tasks import run_llm_graph
 from celery.result import AsyncResult
+from pydantic import BaseModel
+
+class ChatRequest(BaseModel):
+    user_id:str
+    message:str
 
 app=FastAPI()
 
 @app.post('/chat')
-async def chat(user_id:str,message:str):
-    task=run_llm_graph.delay(user_id,message)
+async def chat(request:ChatRequest):
+    task=run_llm_graph.delay(request.user_id,request.message)
     return{
         'task_id':task.id,
         'status':'queued'

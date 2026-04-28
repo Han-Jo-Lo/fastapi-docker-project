@@ -1,8 +1,9 @@
 from typing_extensions import TypedDict
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import BaseMessage
+from langgraph.graph.message import add_messages
 from langgraph.graph import StateGraph,START,END
 from dotenv import load_dotenv
+from typing import Annotated
 load_dotenv()
 
 llm=ChatOpenAI(
@@ -12,12 +13,12 @@ llm=ChatOpenAI(
 )
 
 class State(TypedDict):
-    messages:list[BaseMessage]
+    messages:Annotated[list,add_messages]
 
 def chat_node(state:State):
     messages=state['messages']
     response=llm.invoke(messages)
-    return {'messages':messages+[response]}
+    return {'messages':response}
 
 builder=StateGraph(State)
 builder.add_node('chat',chat_node)
