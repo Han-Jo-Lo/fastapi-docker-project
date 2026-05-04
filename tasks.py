@@ -9,9 +9,9 @@ def run_llm_graph(user_id:str,message:str):
     langgraph_messages=[]
     for msg in history:
         if msg['role']=='user':
-            langgraph_messages.append(HumanMessage(history['messages']))
+            langgraph_messages.append(HumanMessage(msg['messages']))
         else:
-            langgraph_messages.append(AIMessage(history['messages']))
+            langgraph_messages.append(AIMessage(msg['messages']))
     langgraph_messages.append(HumanMessage(message))
 
     response=Graph.invoke(
